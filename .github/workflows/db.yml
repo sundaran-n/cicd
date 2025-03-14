@@ -1,0 +1,26 @@
+name: DB Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Release Version"
+        required: true
+        type: string
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::<AWS_ACCOUNT_ID>:role/GitHubActionsDBRole
+          role-session-name: GitHubActions
+          aws-region: <AWS_REGION>
+
+      - name: Run DB Script
+        run: |
+          aws rds-data execute-statement \
+            --resource-arn arn:aws:iam::347998599409:role/GitHubActionsEKSRole \
+            --database simplifynode \
+            --sql "SELECT 1;"
