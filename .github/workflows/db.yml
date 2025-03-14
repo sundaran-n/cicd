@@ -1,26 +1,29 @@
-name: DB Execution
+name: RDS CLI Execution
 
 on:
-  workflow_dispatch:
-    inputs:
-      release:
-        description: "Release Version"
-        required: true
-        type: string
+  push:
+    branches:
+      - main
+
 jobs:
-  deploy:
+  execute-rds-script:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::347998599409:role/GitHubActionsEKSRole
-          role-session-name: GitHubActionsEKSRole
+          role-to-assume: arn:aws:iam::347998599409:role/GitHubActions
           aws-region: us-east-1
 
-      - name: Run DB Script
+      - name: Execute SQL Script on RDS
         run: |
-          aws rds-data execute-statement \
+          aws rds execute-statement \
             --resource-arn arn:aws:rds:us-east-1:347998599409:db:simplifynode \
             --database simplifynode \
-            --sql "SELECT 1;"
+            --sql "SELECT NOW();"
