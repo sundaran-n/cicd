@@ -1,9 +1,7 @@
 name: RDS CLI Execution
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:  
 
 jobs:
   execute-rds-script:
@@ -24,10 +22,9 @@ jobs:
       - name: Run Liquibase Migration
         uses: liquibase/liquibase-github-action@v4
         with:
+          operation: 'update'
+          classpath: 'script/APPCATALOG'
+          changeLogFile: 'samplechangelog.sql'
           url: "jdbc:oracle:thin:@simplifynode.c5islbzvpxom.us-east-1.rds.amazonaws.com:1521/SFYNODE"
           username: "GALAXY_SHIELD_NAAP"
           password: "GALAXY_SHIELD_NAAP"
-          changeLogFile: "db/changelog/db.changelog-master.yaml"
-          operation: "update"
-          classpath: "lib" 
-
