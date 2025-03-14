@@ -28,4 +28,5 @@ jobs:
           username: "GALAXY_SHIELD_NAAP"
           password: "GALAXY_SHIELD_NAAP"
           changeLogFile: "db/changelog/db.changelog-master.yaml"
-          command: "update"
+          operation: "update"
+
