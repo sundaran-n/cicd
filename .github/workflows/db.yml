@@ -29,4 +29,5 @@ jobs:
           password: "GALAXY_SHIELD_NAAP"
           changeLogFile: "db/changelog/db.changelog-master.yaml"
           operation: "update"
+          classpath: "lib" 
 
