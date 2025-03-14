@@ -14,13 +14,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::<AWS_ACCOUNT_ID>:role/GitHubActionsDBRole
-          role-session-name: GitHubActions
-          aws-region: <AWS_REGION>
+          role-to-assume: arn:aws:iam::347998599409:role/GitHubActionsEKSRole
+          role-session-name: GitHubActionsEKSRole
+          aws-region: us-east-1
 
       - name: Run DB Script
         run: |
           aws rds-data execute-statement \
-            --resource-arn arn:aws:iam::347998599409:role/GitHubActionsEKSRole \
+            --resource-arn arn:aws:rds:us-east-1:347998599409:db:simplifynode \
             --database simplifynode \
             --sql "SELECT 1;"
