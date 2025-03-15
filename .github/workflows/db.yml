@@ -23,6 +23,25 @@ jobs:
         run: |
           aws rds describe-db-instances --db-instance-identifier simplifynode --query "DBInstances[*].DBInstanceStatus"
 
+      - name: Install Oracle Instant Client
+        run: |
+          sudo apt update
+          sudo apt install -y libaio1
+          wget https://download.oracle.com/otn_software/linux/instantclient/213000/instantclient-basiclite-linux.x64-21.3.0.0.0.zip
+          wget https://download.oracle.com/otn_software/linux/instantclient/213000/instantclient-sqlplus-linux.x64-21.3.0.0.0.zip
+          unzip instantclient-basiclite-linux.x64-21.3.0.0.0.zip
+          unzip instantclient-sqlplus-linux.x64-21.3.0.0.0.zip
+          sudo mv instantclient_21_3 /opt/oracle
+          echo 'export LD_LIBRARY_PATH=/opt/oracle/instantclient_21_3:$LD_LIBRARY_PATH' >> ~/.bashrc
+          echo 'export PATH=/opt/oracle/instantclient_21_3:$PATH' >> ~/.bashrc
+          echo 'export SQLPATH=/opt/oracle/instantclient_21_3' >> ~/.bashrc
+          echo 'export TNS_ADMIN=/opt/oracle/instantclient_21_3' >> ~/.bashrc
+          source ~/.bashrc
+
+      - name: Test Oracle Connection via SQL*Plus
+        run: |
+          echo "SELECT '✅ Connected' FROM dual;" | /opt/oracle/instantclient_21_3/sqlplus GALAXY_SHIELD_NAAP/GALAXY_SHIELD_NAAP@'(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=simplifynode.c5islbzvpxom.us-east-1.rds.amazonaws.com)(PORT=1521)))(CONNECT_DATA=(SID=SFYNODE)))'
+
       - name: Run Liquibase Migration
         uses: liquibase/liquibase-github-action@v4
         with:
