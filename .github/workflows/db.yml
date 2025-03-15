@@ -19,19 +19,9 @@ jobs:
           role-to-assume: arn:aws:iam::347998599409:role/GitHubActions
           aws-region: us-east-1
 
-      - name: Install Oracle Instant Client
+      - name: Check RDS Instance Status
         run: |
-          sudo apt update && sudo apt install -y libaio-dev
-          curl -L -o instantclient.zip "https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-21.10.0.0.0dbru.zip"
-          unzip instantclient.zip -d /opt/oracle
-          echo "/opt/oracle/instantclient_21_10" >> $GITHUB_PATH
-          echo "LD_LIBRARY_PATH=/opt/oracle/instantclient_21_10" >> $GITHUB_ENV
-          echo "TNS_ADMIN=/opt/oracle/instantclient_21_10" >> $GITHUB_ENV
-
-
-      - name: Test SQL Connection
-        run: |
-          echo "exit" | sql -S GALAXY_SHIELD_NAAP/GALAXY_SHIELD_NAAP@"jdbc:oracle:thin:@simplifynode.c5islbzvpxom.us-east-1.rds.amazonaws.com:1521/SFYNODE"
+          aws rds describe-db-instances --db-instance-identifier simplifynode --query "DBInstances[*].DBInstanceStatus"
 
       - name: Run Liquibase Migration
         uses: liquibase/liquibase-github-action@v4
