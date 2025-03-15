@@ -19,6 +19,19 @@ jobs:
           role-to-assume: arn:aws:iam::347998599409:role/GitHubActions
           aws-region: us-east-1
 
+      - name: Install SQL*Plus
+        run: |
+          sudo apt update && sudo apt install -y libaio1
+          curl -O https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-21.10.0.0.0dbru.zip
+          unzip instantclient-basiclite-linux.x64-21.10.0.0.0dbru.zip -d /opt/oracle
+          echo "/opt/oracle/instantclient_21_10" >> $GITHUB_PATH
+
+      - name: Check Oracle Connection
+        run: |
+          export LD_LIBRARY_PATH=/opt/oracle/instantclient_21_10
+          echo "Checking Oracle database connection..."
+          echo "SELECT SYSDATE FROM DUAL;" | sqlplus -s GALAXY_SHIELD_NAAP/GALAXY_SHIELD_NAAP@//simplifynode.c5islbzvpxom.us-east-1.rds.amazonaws.com:1521/SFYNODE
+
       - name: Run Liquibase Migration
         uses: liquibase/liquibase-github-action@v4
         with:
