@@ -19,11 +19,15 @@ jobs:
           role-to-assume: arn:aws:iam::347998599409:role/GitHubActions
           aws-region: us-east-1
 
-      - name: Install SQLcl
+      - name: Install Oracle Instant Client
         run: |
-          curl -O https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-23.1.0.097.1704.zip
-          unzip sqlcl-23.1.0.097.1704.zip -d /opt/oracle
-          echo "/opt/oracle/sqlcl/bin" >> $GITHUB_PATH
+          sudo apt update && sudo apt install -y libaio-dev
+          curl -L -o instantclient.zip "https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-21.10.0.0.0dbru.zip"
+          unzip instantclient.zip -d /opt/oracle
+          echo "/opt/oracle/instantclient_21_10" >> $GITHUB_PATH
+          echo "LD_LIBRARY_PATH=/opt/oracle/instantclient_21_10" >> $GITHUB_ENV
+          echo "TNS_ADMIN=/opt/oracle/instantclient_21_10" >> $GITHUB_ENV
+
 
       - name: Test SQL Connection
         run: |
