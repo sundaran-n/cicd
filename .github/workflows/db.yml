@@ -22,8 +22,15 @@ jobs:
       - name: Check RDS Instance Status
         run: |
           aws rds describe-db-instances --db-instance-identifier simplifynode --query "DBInstances[*].DBInstanceStatus"
+
       - name: Get Public IP
-        run: curl ifconfig.me
+        id: ip
+        run: echo "IP=$(curl -s ifconfig.me)" >> $GITHUB_ENV
+
+      - name: Allow IP in Security Group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id YOUR_SECURITY_GROUP_ID \
+            --protocol tcp --port 1521 --cidr ${{ env.IP }}/32
 
       - name: Test RDS Connection with Telnet
         run: |
