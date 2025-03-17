@@ -11,6 +11,10 @@ on:
         description: "External Repository containing Kubernetes manifests"
         required: true
         type: string
+      external_repo_branch:
+        description: "Branch of the External Repository"
+        required: true
+        type: string
 
 jobs:
   read-inputs:
@@ -60,6 +64,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.external_repo }}  # Use the external repository input
+          ref: ${{ inputs.external_repo_branch }}  # Use the branch input for the external repository
           token: ${{ secrets.GITHUB_TOKEN }}
           path: external-repo  # Check out the external repository into a subdirectory named 'external-repo'
 
