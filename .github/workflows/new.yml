@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       external_repo:
-        description: "External Repository containing manifest"
+        description: "External Repository containing Kubernetes manifests"
         required: true
         type: string
 
@@ -56,12 +56,12 @@ jobs:
       - name: Checkout Repository (Current)
         uses: actions/checkout@v4
 
-      - name: Checkout External Repository (with manifest)
+      - name: Checkout External Repository (with manifests)
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.external_repo }}  # Use the external repository input
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: external-repo  # Cloning into a subdirectory 'external-repo'
+          path: external-repo  # Check out the external repository into a subdirectory named 'external-repo'
 
       - name: Request OIDC Token
         run: |
@@ -73,10 +73,10 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::977186631846:role/GitHubActionsEKSRole
           aws-region: us-east-2
- 
+
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --name stardust --region us-east-1
-        
+
       - name: Replace Image Tags in Kubernetes Manifests (No Commit)
         run: |
           IFS=',' read -r -a IMAGES <<< "${{ needs.read-inputs.outputs.imagetag }}"
