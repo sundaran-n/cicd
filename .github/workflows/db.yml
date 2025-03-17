@@ -26,10 +26,20 @@ jobs:
       - name: Get Public IP
         id: ip
         run: echo "IP=$(curl -s ifconfig.me)" >> $GITHUB_ENV
-
+        
+      - name: Get RDS Security Group ID
+        id: sg
+        run: |
+          RDS_INSTANCE_ID="simplifynode"
+          SECURITY_GROUP_ID=$(aws rds describe-db-instances \
+            --db-instance-identifier $RDS_INSTANCE_ID \
+            --query "DBInstances[0].VpcSecurityGroups[0].VpcSecurityGroupId" \
+            --output text)
+          echo "SECURITY_GROUP_ID=$SECURITY_GROUP_ID" >> $GITHUB_ENV
+          
       - name: Allow IP in Security Group
         run: |
-          aws ec2 authorize-security-group-ingress --group-id YOUR_SECURITY_GROUP_ID \
+          aws ec2 authorize-security-group-ingress --group-id ${{ env.SECURITY_GROUP_ID }} \
             --protocol tcp --port 1521 --cidr ${{ env.IP }}/32
 
       - name: Test RDS Connection with Telnet
