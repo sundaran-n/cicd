@@ -22,6 +22,8 @@ jobs:
       - name: Check RDS Instance Status
         run: |
           aws rds describe-db-instances --db-instance-identifier simplifynode --query "DBInstances[*].DBInstanceStatus"
+      - name: Get Public IP
+        run: curl ifconfig.me
 
       - name: Test RDS Connection with Telnet
         run: |
