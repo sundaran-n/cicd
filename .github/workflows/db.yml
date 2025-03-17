@@ -46,9 +46,9 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y telnet
           if telnet simplifynode.c5islbzvpxom.us-east-1.rds.amazonaws.com 1521; then
-            echo "✅ Connection successful!"
+            echo "Connection successful!"
           else
-            echo "❌ Connection failed!"
+            echo "Connection failed!"
             exit 1
           fi
 
